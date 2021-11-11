@@ -1,0 +1,147 @@
+{
+    "n_gpu": 1,
+    "root_dir": "./",
+    "name": "ImageNet_VGG16",
+    "cross_validation": {
+        "repeat_time": 1,
+        "k_fold": 1
+    },
+
+    "datasets": {
+        "train": {
+            "data": {
+                "module": "data_loaders.examples.ImageNet_dataset",
+                "type": "ImageNetDataset",
+                "kwargs": {
+                    "data_dir": "./data/ImageNet",
+                    "mode": "train"
+                }
+            }
+        },
+        "valid": {
+            "data": {
+                "module": "data_loaders.examples.ImageNet_dataset",
+                "type": "ImageNetDataset",
+                "kwargs": {
+                    "data_dir": "./data/ImageNet",
+                    "mode": "valid"
+                }
+            }
+        },
+        "test": {
+            "data": {
+                "module": "data_loaders.examples.ImageNet_dataset",
+                "type": "ImageNetDataset",
+                "kwargs": {
+                    "data_dir": "./data/ImageNet",
+                    "mode": "test"
+                }
+            }
+        }
+    },
+    "data_loaders": {
+        "train": {
+            "data": {
+                "module": "data_loaders.valid_loader",
+                "type": "ValidDataLoader",
+                "kwargs": {
+                    "DataLoader_kwargs": {
+                        "batch_size": 64,
+                        "shuffle": true,
+                        "num_workers": 4
+                    }
+                }
+            }
+        },
+        "valid": {
+            "data": {
+                "module": "data_loaders.valid_loader",
+                "type": "ValidDataLoader",
+                "kwargs": {
+                    "DataLoader_kwargs": {
+                        "batch_size": 64,
+                        "shuffle": true,
+                        "num_workers": 4
+                    }
+                }
+            }
+        },
+        "test": {
+            "data": {
+                "module": "data_loaders.valid_loader",
+                "type": "ValidDataLoader",
+                "kwargs": {
+                    "DataLoader_kwargs": {
+                        "batch_size": 64,
+                        "shuffle": true,
+                        "num_workers": 4
+                    }
+                }
+            }
+        }
+    },
+    "models": {
+        "model": {
+            "module": "models.examples.VGG16",
+            "type": "VGG16",
+            "kwargs": {
+                "feature_extracting": true
+            }
+        }
+    },
+    "losses": {
+        "loss": {
+            "module": "models.loss",
+            "type": "CrossEntropyLoss"
+        }
+    },
+    "metrics": {
+        "per_iteration": ["accuracy", "top_k_acc"],
+        "per_epoch": []
+    },
+    "optimizers": {
+        "model": {
+            "module": "torch.optim",
+            "type": "SGD",
+            "kwargs": {
+                "lr": 0.001,
+                "momentum": 0.9
+            }
+        }
+    },
+    "lr_schedulers": {
+        "model": {
+            "module": "torch.optim.lr_scheduler",
+            "type": "StepLR",
+            "kwargs": {
+                "step_size": 50,
+                "gamma": 0.1
+            }
+        }
+    },
+    "trainers": {
+        "trainer": {
+            "module": "trainers.trainer",
+            "type": "Trainer",
+            "kwargs": {
+                "apex": false,
+
+                "epochs": 2,
+                "len_epoch": null,
+
+                "save_period": 5,
+                "save_the_best": true,
+                "verbosity": 2,
+
+                "monitor": "min val_loss",
+                "early_stop": 10,
+
+                "tensorboard": false
+            }
+        }
+    },
+    "tester": {
+        "module": "testers.tester",
+        "type": "Tester"
+    }
+}

@@ -1,0 +1,127 @@
+{
+    "n_gpu": 1,
+    "root_dir": "./",
+    "name": "MNIST_LeNet",
+    "cross_validation": {
+        "repeat_time": 1,
+        "k_fold": 1
+    },
+
+    "datasets": {
+        "train": {
+            "data": {
+                "module": "data_loaders.examples.MNIST_dataset",
+                "type": "MNISTDataset",
+                "kwargs": {
+                    "data_dir": "./data/MNIST",
+                    "mode": "train"
+                }
+            }
+        },
+        "valid": {
+        },
+        "test": {
+            "data": {
+                "module": "data_loaders.examples.MNIST_dataset",
+                "type": "MNISTDataset",
+                "kwargs": {
+                    "data_dir": "./data/MNIST",
+                    "mode": "test"
+                }
+            }
+        }
+    },
+    "data_loaders": {
+        "train": {
+            "data": {
+                "module": "data_loaders.valid_loader",
+                "type": "ValidDataLoader",
+                "kwargs": {
+                    "validation_split": 0.2,
+                    "DataLoader_kwargs": {
+                        "batch_size": 64,
+                        "shuffle": true,
+                        "num_workers": 4
+                    }
+                }
+            }
+        },
+        "valid": {
+        },
+        "test": {
+            "data": {
+                "module": "data_loaders.valid_loader",
+                "type": "ValidDataLoader",
+                "kwargs": {
+                    "validation_split": 0,
+                    "DataLoader_kwargs": {
+                        "batch_size": 64,
+                        "shuffle": false,
+                        "num_workers": 4
+                    }
+                }
+            }
+        }
+    },
+    "models": {
+        "model": {
+            "module": "models.examples.LeNet",
+            "type": "LeNet"
+        }
+    },
+    "losses": {
+        "loss": {
+            "is_ftn": true,
+            "module": "models.loss",
+            "type": "nll_loss"
+        }
+    },
+    "metrics": {
+        "per_iteration": ["accuracy", "top_k_acc"],
+        "per_epoch": []
+    },
+    "optimizers": {
+        "model": {
+            "module": "torch.optim",
+            "type": "Adam",
+            "kwargs": {
+                "lr": 0.001
+            }
+        }
+    },
+    "lr_schedulers": {
+        "model": {
+            "module": "torch.optim.lr_scheduler",
+            "type": "StepLR",
+            "kwargs": {
+                "step_size": 50,
+                "gamma": 0.1
+            }
+        }
+    },
+    "trainers": {
+        "trainer": {
+            "module": "trainers.trainer",
+            "type": "Trainer",
+            "kwargs": {
+                "apex": false,
+
+                "epochs": 2,
+                "len_epoch": null,
+
+                "save_period": 1,
+                "save_the_best": true,
+                "verbosity": 2,
+
+                "monitor": "min val_loss",
+                "early_stop": 10,
+
+                "tensorboard": false
+            }
+        }
+    },
+    "tester": {
+        "module": "testers.tester",
+        "type": "Tester"
+    }
+}
